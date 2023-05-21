@@ -6,6 +6,16 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-chrome.contextMenus.onClicked.addListener((data) => {
-  console.log(data);
+chrome.contextMenus.onClicked.addListener(async (data) => {
+  if (data.menuItemId == "replaceImage" && data.mediaType == "image") {
+    const tabs = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    const activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {
+      type: "replace_image",
+      src: data.srcUrl,
+    });
+  }
 });
